@@ -1,0 +1,1 @@
+const rect = require("./rectangle");
