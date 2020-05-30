@@ -1,0 +1,4 @@
+@url = http://localhost:5000/campsites/1
+GET {{url}} HTTP/1.1
+Content-Type: application/json
+Accept: application/json
