@@ -10,6 +10,7 @@ campsiteRouter
 	.route("/")
 	.get((req, res, next) => {
 		Campsite.find()
+			.populate("comments.author")
 			.then((campsites) => {
 				res.statusCode = 200;
 				res.setHeader("Content-Type", "application/json");
@@ -42,19 +43,14 @@ campsiteRouter
 	});
 
 campsiteRouter
-	.route("/:campsiteId/comments")
+	.route("/:campsiteId")
 	.get((req, res, next) => {
 		Campsite.findById(req.params.campsiteId)
+			.populate("comments.author")
 			.then((campsite) => {
-				if (campsite) {
-					res.statusCode = 200;
-					res.setHeader("Content-Type", "application/json");
-					res.json(campsite.comments);
-				} else {
-					err = new Error(`Campsite ${req.params.campsiteId} not found`);
-					err.status = 404;
-					return next(err);
-				}
+				res.statusCode = 200;
+				res.setHeader("Content-Type", "application/json");
+				res.json(campsite);
 			})
 			.catch((err) => next(err));
 	})
