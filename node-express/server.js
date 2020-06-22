@@ -10,12 +10,15 @@ const session = require("express-session");
 const FileStore = require("session-file-store")(session);
 const passport = require("passport");
 const authenticate = require("./authenticate");
+const uploadRouter = require("./routes/uploadRouter");
 
 const hostname = "localhost";
 const port = 5000;
 
 const app = express();
 app.use(morgan("dev"));
+
+app.use("/imageUpload", uploadRouter);
 
 app.use(bodyParser.json());
 
@@ -77,6 +80,16 @@ app.use((req, res) => {
 	res.statusCode = 200;
 	res.setHeader("Content-Type", "text/html");
 	res.end("<html><body><h1>This is an Express Server</h1></body></html>");
+});
+
+// Secure traffic only
+app.all("*", (req, res, next) => {
+	if (req.secure) {
+		return next();
+	} else {
+		console.log(`Redirecting to: https://${req.hostname}:${app.get("secPort")}${req.url}`);
+		res.redirect(301, `https://${req.hostname}:${app.get("secPort")}${req.url}`);
+	}
 });
 
 app.listen(port, hostname, () => {
